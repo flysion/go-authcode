@@ -8,9 +8,7 @@ import (
 	"os"
 	"math/rand"
 	"fmt"
-	"common/crypto/md5"
-	"common/log"
-	"common"
+	"github.com/a328496647/go-authcode/md5"
 )
 
 var SaltLength int
@@ -51,14 +49,6 @@ func uuid(salt...string) string {
 }
 
 func authcode(str string, key string, encrypt bool, expiry int64) (result string, ok bool) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Error("dis", "", common.H{"err": err, "str": str, "key": key, "encrypt": encrypt, "expiry": expiry})
-			result = ""
-			ok = false
-		}
-	} ()
-
 	k := md5.HexSB(key)
 	a := md5.HexBS(k[:16])
 	b := md5.HexBS(k[16:])

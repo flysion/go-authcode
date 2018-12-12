@@ -11,10 +11,7 @@ import (
 	"github.com/a328496647/go-authcode/md5"
 )
 
-var SaltLength int
-
 func init() {
-	SaltLength = 22
 	rand.Seed(time.Now().UnixNano())
 }
 
@@ -49,15 +46,16 @@ func uuid(salt...string) string {
 }
 
 func authcode(str string, key string, encrypt bool, expiry int64) (result string, ok bool) {
+	sl := 4
 	k := md5.HexSB(key)
 	a := md5.HexBS(k[:16])
 	b := md5.HexBS(k[16:])
 	c := ""
 
 	if encrypt {
-		c = uuid(str)[0:SaltLength]
+		c = uuid(str)[0:sl]
 	} else {
-		c = str[0:SaltLength]
+		c = str[0:sl]
 	}
 
 	kk := []byte(a + md5.HexSS(a + c))
@@ -65,7 +63,7 @@ func authcode(str string, key string, encrypt bool, expiry int64) (result string
 
 	s := ""
 	if !encrypt {
-		if res, err := base64Decode(str[SaltLength:]); err != nil {
+		if res, err := base64Decode(str[sl:]); err != nil {
 			return "", false
 		} else {
 			s = string(res)
